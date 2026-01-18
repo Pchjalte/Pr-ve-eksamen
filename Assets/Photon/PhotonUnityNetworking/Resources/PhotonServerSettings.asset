@@ -41,6 +41,9 @@ MonoBehaviour:
   - RespawnSpaceship
   - TakeDamage
   - RPC_RestartRound
+  - NotifyDeath
+  - RespawnAll
+  - RespawnRPC
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1
