@@ -21,7 +21,12 @@ public class SimpleLauncher : MonoBehaviourPunCallbacks {
     public override void OnJoinedRoom() {
 
         Debug.Log("Joined a room.");
-        PhotonNetwork.Instantiate(playerPrefab.name, Vector3.zero, Quaternion.identity);
+        Transform spawns = GameObject.Find("SpawnPoints").transform;
+
+        int index = (PhotonNetwork.LocalPlayer.ActorNumber - 1) % spawns.childCount;
+        Transform spawn = spawns.GetChild(index);
+
+        PhotonNetwork.Instantiate(playerPrefab.name, spawn.position, spawn.rotation);
     }
 
 }
