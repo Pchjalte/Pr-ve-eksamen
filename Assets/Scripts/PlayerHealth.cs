@@ -43,7 +43,6 @@ public class PlayerHealth : MonoBehaviourPun {
         StartCoroutine(FadeToBlack());
         StartCoroutine(DeathSequence());
 
-        // Restart the whole match
         if (PhotonNetwork.IsMasterClient)
             GameManager.Instance.RestartRound();
     }
@@ -53,7 +52,6 @@ public class PlayerHealth : MonoBehaviourPun {
         rb.constraints = RigidbodyConstraints.None;
         rb.AddTorque(transform.right * 8f, ForceMode.Impulse);
 
-        // look straight down
         Quaternion startRot = cam.transform.rotation;
         Quaternion down = Quaternion.Euler(90f, cam.transform.eulerAngles.y, 0f);
 
@@ -65,8 +63,6 @@ public class PlayerHealth : MonoBehaviourPun {
             yield return null;
         }
 
-
-        // slowly raise camera upward
         Vector3 startPos = cam.transform.position;
         Vector3 raisedPos = startPos + Vector3.up * camHeight;
 
