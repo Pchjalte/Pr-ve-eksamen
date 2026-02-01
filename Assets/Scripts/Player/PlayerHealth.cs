@@ -5,41 +5,64 @@ using UnityEngine.UI;
 
 public class PlayerHealth : MonoBehaviourPun {
 
-    public int maxHealth = 100;
-    int currentHealth;
+    public short maxHealth = 100;
     public float camHeight = 1.5f;
-    public float fadeSpeed;
-
+    public float fadeSpeed = 1f;
     public Image deathFade;
 
-    Rigidbody rb;
-    Camera cam;
+    public bool shieldActive;
 
-    bool dead = false;
+    private short currentHealth;
+    private Rigidbody rb;
+    private Camera cam;
+    private bool dead;
 
-    void Awake() {
+    private static Transform spawnRoot;
+
+    private void Awake() {
 
         currentHealth = maxHealth;
         rb = GetComponent<Rigidbody>();
         cam = GetComponentInChildren<Camera>();
+
+        if (spawnRoot == null) {
+
+            GameObject go = GameObject.Find("SpawnPoints");
+            if (go != null)
+                spawnRoot = go.transform;
+        }
     }
 
     [PunRPC]
-    public void TakeDamage(int dmg) {
+    public void TakeDamage(short dmg) {
 
         if (!photonView.IsMine || dead) return;
 
-        currentHealth -= dmg;
+        if (shieldActive) {
+            shieldActive = false;
+            return;
+        }
 
+        currentHealth -= dmg;
         if (currentHealth <= 0)
             Die();
     }
 
-    void Die() {
+    public void Heal(short amount) {
+
+        if (!photonView.IsMine || dead) return;
+
+        currentHealth = (short)Mathf.Min(currentHealth + amount, maxHealth);
+    }
+
+
+    private void Die() {
 
         dead = true;
+
         cam.transform.SetParent(null);
         cam.GetComponent<AudioListener>().enabled = true;
+
         StartCoroutine(FadeToBlack());
         StartCoroutine(DeathSequence());
 
@@ -47,53 +70,48 @@ public class PlayerHealth : MonoBehaviourPun {
             GameManager.Instance.RestartRound();
     }
 
-    IEnumerator DeathSequence() {
+    private IEnumerator DeathSequence() {
 
         rb.constraints = RigidbodyConstraints.None;
         rb.AddTorque(transform.right * 8f, ForceMode.Impulse);
 
         Quaternion startRot = cam.transform.rotation;
-        Quaternion down = Quaternion.Euler(90f, cam.transform.eulerAngles.y, 0f);
+        Quaternion down = Quaternion.Euler(90f, startRot.eulerAngles.y, 0f);
 
-        float t = 0;
-        while (t < 1) {
+        for (float t = 0f; t < 1f; t += Time.deltaTime * 2f) {
 
             cam.transform.rotation = Quaternion.Slerp(startRot, down, t);
-            t += Time.deltaTime * 2f;
             yield return null;
         }
 
         Vector3 startPos = cam.transform.position;
         Vector3 raisedPos = startPos + Vector3.up * camHeight;
 
-        t = 0;
-        while (t < 1) {
+        for (float t = 0f; t < 1f; t += Time.deltaTime * 0.4f) {
 
             cam.transform.position = Vector3.Lerp(startPos, raisedPos, t);
-            t += Time.deltaTime * 0.4f;
             yield return null;
         }
-
     }
 
     public void ForceRespawn() {
 
-        if (!photonView.IsMine) return;
+        if (!photonView.IsMine || spawnRoot == null) return;
 
-        Transform spawns = GameObject.Find("SpawnPoints").transform;
-        Transform spawn = spawns.GetChild(Random.Range(0, spawns.childCount));
+        int index = Random.Range(0, spawnRoot.childCount);
+        Transform spawn = spawnRoot.GetChild(index);
 
         PhotonNetwork.Destroy(gameObject);
         PhotonNetwork.Instantiate("Player", spawn.position, spawn.rotation);
     }
 
-    IEnumerator FadeToBlack() {
-        float t = 0;
+    private IEnumerator FadeToBlack() {
+
         Color c = deathFade.color;
 
-        while (t < 1) {
-            t += Time.deltaTime * fadeSpeed;
-            c.a = Mathf.Lerp(0, 1, t);
+        for (float t = 0f; t < 1f; t += Time.deltaTime * fadeSpeed) {
+
+            c.a = t;
             deathFade.color = c;
             yield return null;
         }

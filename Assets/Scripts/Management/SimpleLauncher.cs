@@ -6,27 +6,26 @@ using Photon.Pun;
 public class SimpleLauncher : MonoBehaviourPunCallbacks {
 
     public PhotonView playerPrefab;
+    private Transform spawnRoot;
 
-    void Start() {
+    private void Start() {
 
         PhotonNetwork.ConnectUsingSettings();
     }
 
     public override void OnConnectedToMaster() {
 
-        Debug.Log("Connected to Master");
         PhotonNetwork.JoinRandomOrCreateRoom();
     }
 
     public override void OnJoinedRoom() {
 
-        Debug.Log("Joined a room.");
-        Transform spawns = GameObject.Find("SpawnPoints").transform;
+        if (spawnRoot == null)
+            spawnRoot = GameObject.Find("SpawnPoints")?.transform;
 
-        int index = (PhotonNetwork.LocalPlayer.ActorNumber - 1) % spawns.childCount;
-        Transform spawn = spawns.GetChild(index);
+        int index = (PhotonNetwork.LocalPlayer.ActorNumber - 1) % spawnRoot.childCount;
+        Transform spawn = spawnRoot.GetChild(index);
 
         PhotonNetwork.Instantiate(playerPrefab.name, spawn.position, spawn.rotation);
     }
-
 }
