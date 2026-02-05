@@ -4,7 +4,6 @@ using Photon.Pun;
 
 public sealed class AbilityController : MonoBehaviourPun {
 
-    [Tooltip("Exactly one ability for now")]
     public AbilityBase equippedAbility;
 
     private InputSystem_Actions input;
@@ -18,6 +17,22 @@ public sealed class AbilityController : MonoBehaviourPun {
         }
 
         input = new InputSystem_Actions();
+    }
+
+    public void EquipAbility(AbilityBase newAbility) {
+
+        if (equippedAbility == newAbility)
+            return;
+
+        if (equippedAbility != null)
+            equippedAbility.enabled = false;
+
+        equippedAbility = newAbility;
+
+        if (equippedAbility != null) {
+            equippedAbility.enabled = true;
+            equippedAbility.Initialize();
+        }
     }
 
     private void OnEnable() {
