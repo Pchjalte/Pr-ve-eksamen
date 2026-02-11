@@ -1,31 +1,31 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using Photon.Pun;
+//using System.Collections;
+//using System.Collections.Generic;
+//using UnityEngine;
+//using Photon.Pun;
 
-public class SimpleLauncher : MonoBehaviourPunCallbacks {
+//public class SimpleLauncher : MonoBehaviourPunCallbacks {
 
-    public PhotonView playerPrefab;
-    private Transform spawnRoot;
+//    public PhotonView playerPrefab;
+//    private Transform spawnRoot;
 
-    private void Start() {
+//    private void Start() {
 
-        PhotonNetwork.ConnectUsingSettings();
-    }
+//        PhotonNetwork.ConnectUsingSettings();
+//    }
 
-    public override void OnConnectedToMaster() {
+//    public override void OnConnectedToMaster() {
 
-        PhotonNetwork.JoinRandomOrCreateRoom();
-    }
+//        PhotonNetwork.JoinRandomOrCreateRoom();
+//    }
 
-    public override void OnJoinedRoom() {
+//    public override void OnJoinedRoom() {
 
-        if (spawnRoot == null)
-            spawnRoot = GameObject.Find("SpawnPoints")?.transform;
+//        if (spawnRoot == null)
+//            spawnRoot = GameObject.Find("SpawnPoints")?.transform;
 
-        int index = (PhotonNetwork.LocalPlayer.ActorNumber - 1) % spawnRoot.childCount;
-        Transform spawn = spawnRoot.GetChild(index);
+//        int index = (PhotonNetwork.LocalPlayer.ActorNumber - 1) % spawnRoot.childCount;
+//        Transform spawn = spawnRoot.GetChild(index);
 
-        PhotonNetwork.Instantiate(playerPrefab.name, spawn.position, spawn.rotation);
-    }
-}
+//        PhotonNetwork.Instantiate(playerPrefab.name, spawn.position, spawn.rotation);
+//    }
+//}
