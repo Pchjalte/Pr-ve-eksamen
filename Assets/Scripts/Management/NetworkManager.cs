@@ -127,5 +127,19 @@ public class NetworkManager : MonoBehaviourPunCallbacks {
         Transform spawn = spawnRoot.GetChild(index);
 
         PhotonNetwork.Instantiate(playerPrefab.name, spawn.position, spawn.rotation);
+
+        GameObject playerObj = PhotonNetwork.Instantiate (
+        playerPrefab.name,
+        spawn.position,
+        spawn.rotation
+        );
+
+        Player player = PhotonNetwork.LocalPlayer;
+
+        GunID gun = PlayerLoadout.GetGun(player);
+        AbilityID ability = PlayerLoadout.GetAbility(player);
+
+        playerObj.GetComponent<PlayerLoadoutApplier>()
+            .Apply(gun, ability);
     }
 }
