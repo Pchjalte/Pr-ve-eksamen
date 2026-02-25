@@ -31,6 +31,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks {
 
         PhotonNetwork.LogLevel = PunLogLevel.Full;
         PhotonNetwork.ConnectUsingSettings();
+        PhotonNetwork.AutomaticallySyncScene = true;
     }
 
     public override void OnEnable() {
@@ -109,9 +110,15 @@ public class NetworkManager : MonoBehaviourPunCallbacks {
         SceneManager.LoadScene(3);
     }
 
+    public override void OnLeftRoom() {
+
+        PhotonNetwork.LeaveRoom();
+        SceneManager.LoadScene(0);
+    }
+
     void OnSceneLoaded(Scene scene, LoadSceneMode mode) {
 
-        if (scene.buildIndex != 3 || !PhotonNetwork.InRoom)
+        if (scene.buildIndex != 4 || !PhotonNetwork.InRoom)
             return;
 
         spawnRoot = GameObject.Find("SpawnPoints")?.transform;

@@ -4,20 +4,20 @@ using UnityEngine;
 public class LoadoutIDSelect : MonoBehaviour {
 
     public void SelectGun(int id) {
+        var player = PhotonNetwork.LocalPlayer;
 
         GunID gun = (GunID)id;
+        AbilityID ability = PlayerLoadout.GetAbility(player);
 
-        AbilityID currentAbility = PlayerLoadout.GetAbility(PhotonNetwork.LocalPlayer);
-
-        PlayerLoadout.SetLoadout(gun, currentAbility);
+        PlayerLoadout.SetLoadout(gun, ability);
     }
 
     public void SelectAbility(int id) {
+        var player = PhotonNetwork.LocalPlayer;
 
         AbilityID ability = (AbilityID)id;
+        GunID gun = PlayerLoadout.GetGun(player);
 
-        GunID currentGun = PlayerLoadout.GetGun(PhotonNetwork.LocalPlayer);
-
-        PlayerLoadout.SetLoadout(currentGun, ability);
+        PlayerLoadout.SetLoadout(gun, ability);
     }
 }

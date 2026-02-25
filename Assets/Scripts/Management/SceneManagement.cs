@@ -23,12 +23,12 @@ public class SceneManagement : MonoBehaviour {
         SceneManager.LoadScene(2);
     }
 
-    public void JoinGame() {
+    public void CharacterSelect() {
 
         SceneManager.LoadScene(3);
     }
 
-    public void CharacterSelect() {
+    public void JoinGame() {
 
         SceneManager.LoadScene(4);
     }
