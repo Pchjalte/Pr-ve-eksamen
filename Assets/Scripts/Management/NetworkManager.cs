@@ -15,6 +15,8 @@ public class NetworkManager : MonoBehaviourPunCallbacks {
 
     private bool isReadyForRooms = false;
 
+    bool playerSpawned;
+
     void Awake() {
 
         if (Instance == null) {
@@ -58,6 +60,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks {
         Debug.Log("Photon ready for matchmaking.");
     }
     public void JoinPrivate(string code) {
+
         if (!isReadyForRooms) {
 
             Debug.LogWarning("Photon not ready yet.");
@@ -112,7 +115,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks {
 
     public override void OnLeftRoom() {
 
-        PhotonNetwork.LeaveRoom();
         SceneManager.LoadScene(0);
     }
 
@@ -120,6 +122,11 @@ public class NetworkManager : MonoBehaviourPunCallbacks {
 
         if (scene.buildIndex != 4 || !PhotonNetwork.InRoom)
             return;
+
+        if (playerSpawned)
+            return;
+
+        playerSpawned = true;
 
         spawnRoot = GameObject.Find("SpawnPoints")?.transform;
 
@@ -133,13 +140,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks {
 
         Transform spawn = spawnRoot.GetChild(index);
 
-        PhotonNetwork.Instantiate(playerPrefab.name, spawn.position, spawn.rotation);
-
-        GameObject playerObj = PhotonNetwork.Instantiate (
-        playerPrefab.name,
-        spawn.position,
-        spawn.rotation
-        );
+        GameObject playerObj = PhotonNetwork.Instantiate(playerPrefab.name, spawn.position, spawn.rotation);
 
         Player player = PhotonNetwork.LocalPlayer;
 

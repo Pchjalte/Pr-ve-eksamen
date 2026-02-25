@@ -30,6 +30,12 @@ public class GunSystem : MonoBehaviourPun {
 
     private InputSystem_Actions input;
 
+    public void Initialize(Camera cam, TextMeshProUGUI ammoText) {
+
+        fpsCam = cam;
+        text = ammoText;
+    }
+
     private void Awake() {
 
         if (!photonView.IsMine) {
@@ -79,8 +85,7 @@ public class GunSystem : MonoBehaviourPun {
 
         do {
 
-            Vector3 dir = fpsCam.transform.forward +
-                          new Vector3(Random.Range(-spread, spread), Random.Range(-spread, spread), 0f);
+            Vector3 dir = fpsCam.transform.forward + new Vector3(Random.Range(-spread, spread), Random.Range(-spread, spread), 0f);
 
             if (Physics.Raycast(fpsCam.transform.position, dir, out RaycastHit hit, range)) {
 

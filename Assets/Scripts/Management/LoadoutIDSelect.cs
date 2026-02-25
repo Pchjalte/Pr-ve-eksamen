@@ -4,6 +4,7 @@ using UnityEngine;
 public class LoadoutIDSelect : MonoBehaviour {
 
     public void SelectGun(int id) {
+
         var player = PhotonNetwork.LocalPlayer;
 
         GunID gun = (GunID)id;
@@ -13,6 +14,7 @@ public class LoadoutIDSelect : MonoBehaviour {
     }
 
     public void SelectAbility(int id) {
+
         var player = PhotonNetwork.LocalPlayer;
 
         AbilityID ability = (AbilityID)id;

@@ -5,7 +5,7 @@ using System.Collections;
 public sealed class HealAbility : AbilityBase {
 
     public short healAmount = 30;
-    public float cooldown = 5f;
+    public float cooldown = 10f;
 
     private PlayerHealth health;
 
