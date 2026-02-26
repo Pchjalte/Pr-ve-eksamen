@@ -1,9 +1,8 @@
 fileFormatVersion: 2
-guid: d0aacb83307022d449e90a09d28222ae
-AssetOrigin:
-  serializedVersion: 1
-  productId: 119922
-  packageName: PUN 2 - FREE
-  packageVersion: 2.52
-  assetPath: Assets/Photon/PhotonUnityNetworking/Code/Editor/PunSceneSettingsFile.asset
-  uploadId: 817708
+guid: 0aa9e422bdcd34e458dc71fb71f02171
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
