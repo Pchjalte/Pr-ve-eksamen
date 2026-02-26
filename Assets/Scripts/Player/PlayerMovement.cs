@@ -4,7 +4,6 @@ using UnityEngine.InputSystem;
 using Photon.Pun;
 
 public class PlayerMovement : MonoBehaviourPun {
-    
     public Transform playerCam;
     public Transform orientation;
 
@@ -41,21 +40,18 @@ public class PlayerMovement : MonoBehaviourPun {
 
     private Vector3 normalVector = Vector3.up;
 
-    private void Awake() {
-
+    void Awake() {
         rb = GetComponent<Rigidbody>();
         input = new InputSystem_Actions();
 
         if (!photonView.IsMine) {
-
             Destroy(playerCam.gameObject);
             Destroy(this);
             return;
         }
     }
 
-    private void OnEnable() {
-
+    void OnEnable() {
         if (!photonView.IsMine) return;
 
         input.Enable();
@@ -67,47 +63,52 @@ public class PlayerMovement : MonoBehaviourPun {
         input.Player.Crouch.canceled += _ => StopCrouch();
     }
 
-    private void OnDisable() {
-
+    void OnDisable() {
         if (!photonView.IsMine) return;
-
         input.Disable();
     }
 
-    private void Start() {
-
+    void Start() {
         if (!photonView.IsMine) return;
 
         playerScale = transform.localScale;
+
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
 
-    private void Update() {
-
+    void Update() {
         if (!photonView.IsMine) return;
 
         moveInput = input.Player.Move.ReadValue<Vector2>();
         lookInput = input.Player.Look.ReadValue<Vector2>();
 
         Look();
-
-        orientation.rotation = Quaternion.Euler(0, transform.eulerAngles.y, 0);
     }
 
-    private void FixedUpdate() {
-
+    void FixedUpdate() {
         if (!photonView.IsMine) return;
 
         Movement();
     }
 
-    private void Movement() {
+    private void Look() {
+        float mouseX = lookInput.x * sensitivity * Time.deltaTime * sensMultiplier;
+        float mouseY = lookInput.y * sensitivity * Time.deltaTime * sensMultiplier;
 
+        xRotation -= mouseY; 
+        xRotation = Mathf.Clamp(xRotation, -90f, 90f);
+
+        playerCam.localRotation = Quaternion.Euler(xRotation, playerCam.localRotation.eulerAngles.y + mouseX, 0); 
+        orientation.localRotation = Quaternion.Euler(0, playerCam.localRotation.eulerAngles.y, 0);
+    }
+
+    void Movement() {
         rb.AddForce(Vector3.down * Time.deltaTime * 10);
 
         Vector2 mag = FindVelRelativeToLook();
-        float xMag = mag.x, yMag = mag.y;
+        float xMag = mag.x;
+        float yMag = mag.y;
 
         CounterMovement(moveInput.x, moveInput.y, mag);
 
@@ -115,7 +116,6 @@ public class PlayerMovement : MonoBehaviourPun {
             Jump();
 
         if (crouching && grounded && readyToJump) {
-
             rb.AddForce(Vector3.down * Time.deltaTime * 3000);
             return;
         }
@@ -132,23 +132,7 @@ public class PlayerMovement : MonoBehaviourPun {
         rb.AddForce(orientation.right * moveInput.x * moveSpeed * Time.deltaTime * multiplier);
     }
 
-    private void Look() {
-
-        float mouseX = lookInput.x * sensitivity * Time.deltaTime * sensMultiplier;
-        float mouseY = lookInput.y * sensitivity * Time.deltaTime * sensMultiplier;
-
-        xRotation -= mouseY;
-        xRotation = Mathf.Clamp(xRotation, -90f, 90f);
-
-        // Vertical rotation = camera only
-        playerCam.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
-
-        // Horizontal rotation = whole body
-        transform.Rotate(Vector3.up * mouseX);
-    }
-
-    private void StartCrouch() {
-
+    void StartCrouch() {
         crouching = true;
 
         float heightDiff = playerScale.y - crouchScale.y;
@@ -159,8 +143,7 @@ public class PlayerMovement : MonoBehaviourPun {
             rb.AddForce(orientation.forward * slideForce);
     }
 
-    private void StopCrouch() {
-
+    void StopCrouch() {
         crouching = false;
 
         float heightDiff = playerScale.y - crouchScale.y;
@@ -168,13 +151,12 @@ public class PlayerMovement : MonoBehaviourPun {
         transform.position += Vector3.up * (heightDiff * 0.5f);
     }
 
-    private void Jump() {
-
+    void Jump() {
         if (!grounded) return;
 
         readyToJump = false;
 
-        rb.AddForce(Vector2.up * jumpForce * 1.5f);
+        rb.AddForce(Vector3.up * jumpForce * 1.5f);
         rb.AddForce(normalVector * jumpForce * 0.5f);
 
         Vector3 vel = rb.linearVelocity;
@@ -183,13 +165,11 @@ public class PlayerMovement : MonoBehaviourPun {
         Invoke(nameof(ResetJump), jumpCooldown);
     }
 
-    private void ResetJump() {
-
+    void ResetJump() {
         readyToJump = true;
     }
 
-    private void CounterMovement(float x, float y, Vector2 mag) {
-
+    void CounterMovement(float x, float y, Vector2 mag) {
         if (!grounded || jumping) return;
 
         if (crouching) {
@@ -209,8 +189,7 @@ public class PlayerMovement : MonoBehaviourPun {
         }
     }
 
-    public Vector2 FindVelRelativeToLook() {
-
+    Vector2 FindVelRelativeToLook() {
         float lookAngle = orientation.eulerAngles.y;
         float moveAngle = Mathf.Atan2(rb.linearVelocity.x, rb.linearVelocity.z) * Mathf.Rad2Deg;
         float u = Mathf.DeltaAngle(lookAngle, moveAngle);
@@ -222,19 +201,15 @@ public class PlayerMovement : MonoBehaviourPun {
         );
     }
 
-    private bool IsFloor(Vector3 v) {
-
+    bool IsFloor(Vector3 v) {
         return Vector3.Angle(Vector3.up, v) < maxSlopeAngle;
     }
 
-    private void OnCollisionStay(Collision other) {
-
+    void OnCollisionStay(Collision other) {
         if ((whatIsGround & (1 << other.gameObject.layer)) == 0) return;
 
         foreach (var contact in other.contacts) {
-
             if (IsFloor(contact.normal)) {
-
                 grounded = true;
                 normalVector = contact.normal;
                 CancelInvoke(nameof(StopGrounded));
@@ -244,8 +219,7 @@ public class PlayerMovement : MonoBehaviourPun {
         Invoke(nameof(StopGrounded), Time.deltaTime * 3f);
     }
 
-    private void StopGrounded() {
-
+    void StopGrounded() {
         grounded = false;
     }
 }
