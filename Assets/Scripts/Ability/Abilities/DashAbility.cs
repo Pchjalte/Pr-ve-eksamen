@@ -5,7 +5,7 @@ using System.Collections;
 public sealed class DashAbility : AbilityBase {
 
     public float dashForce = 200f;
-    public float cooldown = 10f;
+    public float cooldown = 7f;
 
     private Rigidbody rb;
 

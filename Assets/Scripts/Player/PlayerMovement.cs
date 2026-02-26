@@ -91,6 +91,8 @@ public class PlayerMovement : MonoBehaviourPun {
         lookInput = input.Player.Look.ReadValue<Vector2>();
 
         Look();
+
+        orientation.rotation = Quaternion.Euler(0, transform.eulerAngles.y, 0);
     }
 
     private void FixedUpdate() {
@@ -138,8 +140,11 @@ public class PlayerMovement : MonoBehaviourPun {
         xRotation -= mouseY;
         xRotation = Mathf.Clamp(xRotation, -90f, 90f);
 
-        playerCam.localRotation = Quaternion.Euler(xRotation, playerCam.localRotation.eulerAngles.y + mouseX, 0);
-        orientation.localRotation = Quaternion.Euler(0, playerCam.localRotation.eulerAngles.y, 0);
+        // Vertical rotation = camera only
+        playerCam.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
+
+        // Horizontal rotation = whole body
+        transform.Rotate(Vector3.up * mouseX);
     }
 
     private void StartCrouch() {
