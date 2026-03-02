@@ -1,8 +1,8 @@
 using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
-using UnityEngine;
 using TMPro;
+using UnityEngine;
 
 public class ReadySystem : MonoBehaviourPunCallbacks {
 
@@ -11,7 +11,6 @@ public class ReadySystem : MonoBehaviourPunCallbacks {
     const string READY = "r";
 
     void Start() {
-
         UpdateReadyUI();
     }
 
@@ -22,7 +21,7 @@ public class ReadySystem : MonoBehaviourPunCallbacks {
         if (PhotonNetwork.LocalPlayer.CustomProperties.TryGetValue(READY, out object r))
             ready = (bool)r;
 
-        Hashtable table = new Hashtable();
+        Hashtable table = new();
         table[READY] = !ready;
 
         PhotonNetwork.LocalPlayer.SetCustomProperties(table);

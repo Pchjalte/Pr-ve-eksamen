@@ -3,35 +3,50 @@ using TMPro;
 using UnityEngine.UI;
 
 public class RoomUI : MonoBehaviour {
-
     public TMP_InputField roomNameField;
-    public TMP_InputField roomCodeField;
+    public TMP_InputField createCodeField;
+    public TMP_InputField joinCodeField;
 
     public Button createButton;
+    public Button joinPrivateButton;
 
     void Start() {
+        roomNameField.onValueChanged.AddListener(_ => ValidateButtons());
+        createCodeField.onValueChanged.AddListener(_ => ValidateButtons());
+        joinCodeField.onValueChanged.AddListener(_ => ValidateButtons());
 
-        roomNameField.onValueChanged.AddListener(_ => ValidateCreateButton());
-        roomCodeField.onValueChanged.AddListener(_ => ValidateCreateButton());
-
-        ValidateCreateButton();
+        ValidateButtons();
     }
 
-    void ValidateCreateButton() {
+    void ValidateButtons() {
+        bool publicName = !string.IsNullOrWhiteSpace(roomNameField.text);
+        bool privateCreate = !string.IsNullOrWhiteSpace(createCodeField.text);
+        bool privateJoin = !string.IsNullOrWhiteSpace(joinCodeField.text);
 
-        bool hasPublicName = !string.IsNullOrWhiteSpace(roomNameField.text);
-        bool hasCode = !string.IsNullOrWhiteSpace(roomCodeField.text);
-
-        createButton.interactable = hasPublicName || hasCode;
+        createButton.interactable = publicName || privateCreate;
+        joinPrivateButton.interactable = privateJoin;
     }
 
     public void CreateRoom() {
+        string publicName = roomNameField.text.Trim();
+        string privateCode = createCodeField.text.Trim();
 
-        string name = roomNameField.text.Trim();
-        string code = roomCodeField.text.Trim();
+        if (!string.IsNullOrEmpty(privateCode)) {
+            NetworkManager.Instance.CreateRoom("", privateCode, false);
+            return;
+        }
 
-        bool isPrivate = !string.IsNullOrEmpty(code);
+        if (!string.IsNullOrEmpty(publicName)) {
+            NetworkManager.Instance.CreateRoom(publicName, "", true);
+        }
+    }
 
-        NetworkManager.Instance.CreateRoom(name, code, !isPrivate);
+    public void JoinPrivateRoom() {
+        string code = joinCodeField.text.Trim();
+
+        if (string.IsNullOrEmpty(code))
+            return;
+
+        NetworkManager.Instance.JoinPrivate(code);
     }
 }

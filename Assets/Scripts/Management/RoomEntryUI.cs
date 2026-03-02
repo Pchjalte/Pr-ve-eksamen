@@ -8,7 +8,7 @@ public class RoomEntryUI : MonoBehaviour {
     public TMP_Text label;
     public Button joinButton;
 
-    private string roomName;
+    string roomName;
 
     public void Setup(RoomInfo info) {
 
@@ -21,7 +21,6 @@ public class RoomEntryUI : MonoBehaviour {
     }
 
     void JoinRoom() {
-
         NetworkManager.Instance.JoinPublicRoom(roomName);
     }
 }

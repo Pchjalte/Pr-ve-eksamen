@@ -9,10 +9,9 @@ public class RoomListUI : MonoBehaviour {
     public Transform contentRoot;
     public GameObject roomEntryPrefab;
 
-    private List<GameObject> spawnedEntries = new List<GameObject>();
+    private readonly List<GameObject> spawnedEntries = new();
 
     void Awake() {
-
         Instance = this;
     }
 
@@ -28,7 +27,6 @@ public class RoomListUI : MonoBehaviour {
             GameObject entry = Instantiate(roomEntryPrefab, contentRoot);
 
             RoomEntryUI ui = entry.GetComponent<RoomEntryUI>();
-
             ui.Setup(room);
 
             spawnedEntries.Add(entry);
@@ -37,8 +35,8 @@ public class RoomListUI : MonoBehaviour {
 
     void ClearList() {
 
-        foreach (GameObject go in spawnedEntries)
-            Destroy(go);
+        for (int i = 0; i < spawnedEntries.Count; i++)
+            Destroy(spawnedEntries[i]);
 
         spawnedEntries.Clear();
     }

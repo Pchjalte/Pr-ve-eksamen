@@ -1,35 +1,16 @@
 using UnityEngine;
+using Photon.Pun;
 using UnityEngine.SceneManagement;
 
-public class SceneManagement : MonoBehaviour {
+public class SceneManagement : MonoBehaviourPun {
+
+    public void LoadScene(int sceneID) {
+
+        SceneManager.LoadScene(sceneID);
+    }
 
     public void Exit() {
 
         Application.Quit();
-    }
-
-    public void MainMenu() {
-
-        SceneManager.LoadScene(0);
-    }
-
-    public void RoomJoinOrCreate() {
-
-        SceneManager.LoadScene(1);
-    }
-
-    public void RoomList() {
-
-        SceneManager.LoadScene(2);
-    }
-
-    public void CharacterSelect() {
-
-        SceneManager.LoadScene(3);
-    }
-
-    public void JoinGame() {
-
-        SceneManager.LoadScene(4);
     }
 }
